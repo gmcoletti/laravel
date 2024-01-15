@@ -14,6 +14,11 @@
         <li>
             {{ $contact->name }} - {{ $contact->contact }} - {{ $contact->email }}
             <a href="{{ route('contacts.edit', $contact) }}">Alterar</a>
+            <form action="{{ route('contacts.destroy', $contact) }}" method="post" style="display: inline;">
+                @csrf
+                @method('delete')
+                <button type="submit">Excluir</button>
+            </form>
         </li>
     @endforeach
 </ul>

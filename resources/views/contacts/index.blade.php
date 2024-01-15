@@ -11,7 +11,10 @@
 
 <ul>
     @foreach($contacts as $contact)
-        <li>{{ $contact->name }} - {{ $contact->contact }} - {{ $contact->email }}</li>
+        <li>
+            {{ $contact->name }} - {{ $contact->contact }} - {{ $contact->email }}
+            <a href="{{ route('contacts.edit', $contact) }}">Alterar</a>
+        </li>
     @endforeach
 </ul>
 

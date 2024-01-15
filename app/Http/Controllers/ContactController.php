@@ -29,4 +29,22 @@ class ContactController extends Controller
 
         return redirect()->route('contacts.create')->with('success', 'Contact created successfully!');
     }
+    // app/Http/Controllers/ContactController.php
+
+    public function edit(Contact $contact)
+    {
+        return view('contacts.create', compact('contact'));
+    }
+    public function update(Request $request, Contact $contact)
+    {
+        $request->validate([
+            'name'    => 'required|string|min:5',
+            'contact' => 'required|digits:9',
+            'email'   => 'required|email|unique:contacts,email,'.$contact->id,
+        ]);
+
+        $contact->update($request->all());
+
+        return redirect()->route('contacts.index')->with('success', 'Contact updated successfully!');
+    }
 }

@@ -17,9 +17,9 @@ class AuthController extends Controller
 
         if ($username == 'adm' && $password == '123') {
             session(['authenticated' => true]);
-            return redirect()->route('contacts.index');
+            return response()->json(['success' => true, 'redirect' => route('contacts.index')]);
         }
 
-        return redirect()->route('login')->with('error', 'Credenciais inválidas.');
+        return response()->json(['success' => false, 'error' => 'Credenciais inválidas.']);
     }
 }

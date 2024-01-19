@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Contact;
+use Illuminate\Pagination\Paginator;
 
 class ContactController extends Controller
 {
     public function index()
     {
-        $contacts = Contact::all();
+        $contacts = Contact::paginate(10);
         $view = true;
         return view('contacts.index', compact('contacts','view'));
     }
     public function list()
     {
-        $contacts = Contact::all();
+        $contacts = Contact::paginate(10);
         $view = false;
 
         return view('contacts.index', compact('contacts','view'));
@@ -28,16 +29,20 @@ class ContactController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name'    => 'required|string|min:5',
-            'contact' => 'required|digits:9',
-            'email'   => 'required|email|unique:contacts',
-        ]);
-        Contact::create($request->all());
+        try {
+            $request->validate([
+                'name'    => 'required|string|min:5',
+                'contact' => 'required|digits:9',
+                'email'   => 'required|email|unique:contacts',
+            ]);
 
-        return redirect()->route('contacts.create')->with('success', 'Contact created successfully!');
+            Contact::create($request->all());
+
+            return response()->json(['success' => true, 'message' => 'Contact created successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
     }
-    // app/Http/Controllers/ContactController.php
 
     public function edit(Contact $contact)
     {
@@ -45,15 +50,20 @@ class ContactController extends Controller
     }
     public function update(Request $request, Contact $contact)
     {
-        $request->validate([
-            'name'    => 'required|string|min:5',
-            'contact' => 'required|digits:9',
-            'email'   => 'required|email|unique:contacts,email,'.$contact->id,
-        ]);
+        try {
+            $request->validate([
+                'name'    => 'required|string|min:5',
+                'contact' => 'required|digits:9',
+                'email'   => 'required|email|unique:contacts,email,' . $contact->id,
+            ]);
 
-        $contact->update($request->all());
+            $contact->update($request->all());
 
-        return redirect()->route('contacts.index')->with('success', 'Contact updated successfully!');
+            return response()->json(['success' => true, 'message' => 'Contact updated successfully']);
+        } catch (\Exception $e) {
+            // Se ocorrer uma exceção (por exemplo, falha na validação), retorna erro.
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 422);
+        }
     }
 
     public function destroy(Contact $contact)

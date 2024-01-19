@@ -15,6 +15,17 @@ class AuthenticateUser
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $unauthenticatedRoutes = [
+            'list',
+            'login',
+            'authenticate',
+        ];
+
+
+        if (in_array($request->route()->getName(), $unauthenticatedRoutes)) {
+            return $next($request);
+        }
+
         if (session('authenticated')) {
             return $next($request);
         }
